@@ -1,0 +1,4 @@
+databaseChangeLog:
+  - include:
+      file: ./changelog/v1_create_new_schema_store.sql
+      relativeToChangeLogFile: true
