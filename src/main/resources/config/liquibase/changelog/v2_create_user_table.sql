@@ -6,7 +6,7 @@ user_type VARCHAR(50)
 );
 
 
-CREATE SEQUENCE user_id_seq
+CREATE SEQUENCE users_id_seq
     INCREMENT BY 1
     START WITH 1
     MINVALUE 1
@@ -14,4 +14,4 @@ CREATE SEQUENCE user_id_seq
     CACHE 1;
 
 ALTER TABLE store.users
-    ALTER COLUMN id SET DEFAULT nextval('user_id_seq');
+    ALTER COLUMN id SET DEFAULT nextval('users_id_seq');

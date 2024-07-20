@@ -6,8 +6,15 @@ databaseChangeLog:
       file: ./changelog/v2_create_user_table.sql
       relativeToChangeLogFile: true
   - include:
-      file: ./changelog/v3_create_product_table.sql
+      file: ./changelog/v3_add_category_table.sql
       relativeToChangeLogFile: true
   - include:
-      file: ./changelog/v4_create_bill_table.sql
+      file: ./changelog/v4_create_product_table.sql
       relativeToChangeLogFile: true
+  - include:
+      file: ./changelog/v5_create_bill_table.sql
+      relativeToChangeLogFile: true
+  - include:
+      file: ./changelog/v6_add_category_product_user_test_data.sql
+      relativeToChangeLogFile: true
+

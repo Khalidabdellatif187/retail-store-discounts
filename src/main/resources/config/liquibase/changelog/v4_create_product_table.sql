@@ -1,7 +1,9 @@
 create table store.product(
 id int8 PRIMARY KEY,
 name VARCHAR(250),
-price float8
+price float8,
+category_id int8,
+FOREIGN KEY (category_id) REFERENCES store.category(id)
 );
 
 
