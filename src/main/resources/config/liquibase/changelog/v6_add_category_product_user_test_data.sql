@@ -25,14 +25,17 @@ VALUES ('electronics');
 
 ----------------ADD PRODUCT TEST DATA ---------
 INSERT INTO store.product (name, price, category_id)
-VALUES ('APPLE', 14, (SELECT id FROM store.category WHERE name = 'groceries'));
+VALUES ('APPLE', 50, (SELECT id FROM store.category WHERE name = 'groceries'));
 
 INSERT INTO store.product (name, price, category_id)
 VALUES ('MEAT', 50, (SELECT id FROM store.category WHERE name = 'groceries'));
 
 INSERT INTO store.product (name, price, category_id)
+VALUES ('CHICKEN', 100, (SELECT id FROM store.category WHERE name = 'groceries'));
+
+INSERT INTO store.product (name, price, category_id)
 VALUES ('IPHONE14', 1500, (SELECT id FROM store.category WHERE name = 'electronics'));
 
 INSERT INTO store.product (name, price, category_id)
-VALUES ('BATTERY', 20, (SELECT id FROM store.category WHERE name = 'electronics'));
+VALUES ('BATTERY', 100, (SELECT id FROM store.category WHERE name = 'electronics'));
 

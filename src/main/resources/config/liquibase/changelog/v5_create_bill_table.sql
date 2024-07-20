@@ -1,18 +1,14 @@
 create table store.bill(
 id int8 PRIMARY KEY,
 user_id int8,
+product_ids VARCHAR(500),
 total_amount float8,
 net_amount float8,
 FOREIGN KEY (user_id) REFERENCES store.users(id)
 );
 
 
-create table store.bill_product(
-product_id int8,
-bill_id int8,
-FOREIGN KEY (product_id) REFERENCES store.product(id),
-FOREIGN KEY (bill_id) REFERENCES store.bill(id)
-);
+
 
 
 
