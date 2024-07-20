@@ -1,5 +1,6 @@
 <h1>Objective</h1>
-<p>- The application aims to provide users with discounts for products inside retail-store according to type of users and categories</p>
+<p>- The application aims to provide users with discounts for products inside retail-store according to type of users and categories</p><br>
+<p>- Please note that i am using <strong>java17</strong></p>
 <br><br>
 <h2>Running The Code</h2>
 <p>1- Clone the project from the remote repository using this command <strong>git clone https://github.com/Khalidabdellatif187/retail-store-discounts.git </strong> </p>
