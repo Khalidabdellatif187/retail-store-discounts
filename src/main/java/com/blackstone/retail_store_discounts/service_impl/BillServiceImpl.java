@@ -50,7 +50,8 @@ public class BillServiceImpl implements BillService {
         updateBill(bill, totalAmountBeforeDiscounts, netAmountAfterDiscounts, productIds);
 
         billRepository.save(bill);
-        return billMapper.map(bill);
+        BillDto billDto = billMapper.map(bill);
+        return billDto;
     }
 
 
