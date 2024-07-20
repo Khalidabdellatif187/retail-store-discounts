@@ -29,4 +29,6 @@
 </strong></p><br>
 <p>4- After send the request it will return two fields.<strong>totalAmount</strong> whic indicates totalAmount before any discounts <br> and <strong>netAmount</strong>
 indicates netAmount after discounts
-</p>
+</p><br>
+<h2>Uml-Diagram</h2>
+<p>Please note that uml-diagram inside the project with file name called <strong>UmlDiagram.PNG</strong></p>
