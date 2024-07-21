@@ -3,7 +3,9 @@ package com.blackstone.retail_store_discounts.model;
 
 import com.blackstone.retail_store_discounts.enums.UserType;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
@@ -30,4 +32,14 @@ public class Users {
     private UserType userType;
 
 
+    public Users(Users other) {
+        this.id = other.id;
+        this.name = other.name;
+        this.joinDate = other.joinDate;
+        this.userType = other.userType;
+    }
+
+
+    public Users() {
+    }
 }

@@ -3,7 +3,6 @@ package com.blackstone.retail_store_discounts.service_impl;
 import com.blackstone.retail_store_discounts.constants.Constants;
 import com.blackstone.retail_store_discounts.dto.BillDto;
 import com.blackstone.retail_store_discounts.enums.UserType;
-import com.blackstone.retail_store_discounts.mapper.BillMapper;
 import com.blackstone.retail_store_discounts.model.Bill;
 import com.blackstone.retail_store_discounts.model.Product;
 import com.blackstone.retail_store_discounts.model.Users;
@@ -23,10 +22,6 @@ import java.util.stream.Collectors;
 @Service
 public class BillServiceImpl implements BillService {
 
-
-    @Autowired
-    private BillMapper billMapper;
-
     @Autowired
     private BillRepository billRepository;
     @Autowired
@@ -45,12 +40,17 @@ public class BillServiceImpl implements BillService {
         double totalPercentageDiscountAmount = calculateTotalPercentageDiscount(products, discountPercentage);
         double additionalDiscountForOneHundredUsd = calculateAdditionalDiscount(totalAmountBeforeDiscounts - totalPercentageDiscountAmount);
         double netAmountAfterDiscounts = totalAmountBeforeDiscounts - totalPercentageDiscountAmount - additionalDiscountForOneHundredUsd;
-
         String productIds = getProductIdsAsString(products);
         updateBill(bill, totalAmountBeforeDiscounts, netAmountAfterDiscounts, productIds);
-
         billRepository.save(bill);
-        BillDto billDto = billMapper.map(bill);
+        BillDto billDto = map(bill);
+        return billDto;
+    }
+
+    private BillDto map(Bill bill){
+        BillDto billDto = new BillDto();
+        billDto.setTotalAmount(bill.getTotalAmount());
+        billDto.setNetAmount(bill.getNetAmount());
         return billDto;
     }
 

@@ -2,7 +2,6 @@ package com.blackstone.retail_store_discounts.service;
 
 import com.blackstone.retail_store_discounts.dto.BillDto;
 import com.blackstone.retail_store_discounts.enums.UserType;
-import com.blackstone.retail_store_discounts.mapper.BillMapper;
 import com.blackstone.retail_store_discounts.model.Bill;
 import com.blackstone.retail_store_discounts.model.Category;
 import com.blackstone.retail_store_discounts.model.Product;
@@ -25,6 +24,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 public class BillServiceTest {
+
     @Mock
     private UserService userService;
 
@@ -33,9 +33,6 @@ public class BillServiceTest {
 
     @Mock
     private BillRepository billRepository;
-
-    @Mock
-    private BillMapper billMapper;
 
     @InjectMocks
     private BillServiceImpl billServiceImpl;
@@ -46,54 +43,6 @@ public class BillServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         billService = billServiceImpl;  // Assign the implementation to the interface
-    }
-
-    @Test
-    void calculateNetAmount_shouldReturnBillDto() {
-        Users user = new Users();
-        user.setId(1L);
-        user.setUserType(UserType.EMPLOYEE);
-        user.setJoinDate(LocalDate.now().minusYears(3));
-
-        Category category1 = new Category();
-        category1.setId(1L);
-        category1.setName("electronics");
-
-        Category category2 = new Category();
-        category2.setId(2L);
-        category2.setName("groceries");
-
-        Product product1 = new Product();
-        product1.setId(1L);
-        product1.setPrice(100.0);
-        product1.setCategory(category1);
-
-        Product product2 = new Product();
-        product2.setId(2L);
-        product2.setPrice(200.0);
-        product2.setCategory(category2);
-
-        List<Product> products = Arrays.asList(product1, product2);
-
-        Bill bill = new Bill();
-        bill.setUser(user);
-        bill.setProducts(products);
-
-        BillDto billDto = new BillDto();
-        billDto.setTotalAmount(300.0);
-        billDto.setNetAmount(255.0);
-
-        when(userService.findUserById(anyLong())).thenReturn(user);
-        when(productService.findById(anyLong())).thenReturn(product1, product2);
-        when(billMapper.map(any(Bill.class))).thenReturn(billDto);
-
-        BillDto result = billService.calculateNetAmount(bill);
-
-        assertEquals(billDto, result);
-        verify(userService).findUserById(anyLong());
-        verify(productService, times(2)).findById(anyLong());
-        verify(billRepository).save(any(Bill.class));
-        verify(billMapper).map(any(Bill.class));
     }
 
     @Test
@@ -118,21 +67,21 @@ public class BillServiceTest {
         bill.setUser(user);
         bill.setProducts(products);
 
-        BillDto billDto = new BillDto();
-        billDto.setTotalAmount(100.0);
-        billDto.setNetAmount(70.0);
-
         when(userService.findUserById(anyLong())).thenReturn(user);
         when(productService.findById(anyLong())).thenReturn(product);
-        when(billMapper.map(any(Bill.class))).thenReturn(billDto);
 
         BillDto result = billService.calculateNetAmount(bill);
 
-        assertEquals(70.0, result.getNetAmount());
+        double expectedTotalAmount = 100.0;
+        double expectedPercentageDiscount = expectedTotalAmount * 0.30; // 30% discount for employee
+        double amountAfterPercentageDiscount = expectedTotalAmount - expectedPercentageDiscount;
+        double expectedAdditionalDiscount = (int)(amountAfterPercentageDiscount / 100) * 5; // $5 discount for each $100 after percentage discount
+        double expectedNetAmount = amountAfterPercentageDiscount - expectedAdditionalDiscount;
+
+        assertEquals(expectedNetAmount, result.getNetAmount());
         verify(userService).findUserById(anyLong());
         verify(productService).findById(anyLong());
         verify(billRepository).save(any(Bill.class));
-        verify(billMapper).map(any(Bill.class));
     }
 
     @Test
@@ -157,21 +106,21 @@ public class BillServiceTest {
         bill.setUser(user);
         bill.setProducts(products);
 
-        BillDto billDto = new BillDto();
-        billDto.setTotalAmount(100.0);
-        billDto.setNetAmount(90.0);
-
         when(userService.findUserById(anyLong())).thenReturn(user);
         when(productService.findById(anyLong())).thenReturn(product);
-        when(billMapper.map(any(Bill.class))).thenReturn(billDto);
 
         BillDto result = billService.calculateNetAmount(bill);
 
-        assertEquals(90.0, result.getNetAmount());
+        double expectedTotalAmount = 100.0;
+        double expectedPercentageDiscount = expectedTotalAmount * 0.10; // 10% discount for affiliate
+        double amountAfterPercentageDiscount = expectedTotalAmount - expectedPercentageDiscount;
+        double expectedAdditionalDiscount = (int)(amountAfterPercentageDiscount / 100) * 5; // $5 discount for each $100 after percentage discount
+        double expectedNetAmount = amountAfterPercentageDiscount - expectedAdditionalDiscount;
+
+        assertEquals(expectedNetAmount, result.getNetAmount());
         verify(userService).findUserById(anyLong());
         verify(productService).findById(anyLong());
         verify(billRepository).save(any(Bill.class));
-        verify(billMapper).map(any(Bill.class));
     }
 
     @Test
@@ -196,21 +145,21 @@ public class BillServiceTest {
         bill.setUser(user);
         bill.setProducts(products);
 
-        BillDto billDto = new BillDto();
-        billDto.setTotalAmount(100.0);
-        billDto.setNetAmount(95.0);
-
         when(userService.findUserById(anyLong())).thenReturn(user);
         when(productService.findById(anyLong())).thenReturn(product);
-        when(billMapper.map(any(Bill.class))).thenReturn(billDto);
 
         BillDto result = billService.calculateNetAmount(bill);
 
-        assertEquals(95.0, result.getNetAmount());
+        double expectedTotalAmount = 100.0;
+        double expectedPercentageDiscount = expectedTotalAmount * 0.05; // 5% discount for customer over 2 years
+        double amountAfterPercentageDiscount = expectedTotalAmount - expectedPercentageDiscount;
+        double expectedAdditionalDiscount = (int)(amountAfterPercentageDiscount / 100) * 5; // $5 discount for each $100 after percentage discount
+        double expectedNetAmount = amountAfterPercentageDiscount - expectedAdditionalDiscount;
+
+        assertEquals(expectedNetAmount, result.getNetAmount());
         verify(userService).findUserById(anyLong());
         verify(productService).findById(anyLong());
         verify(billRepository).save(any(Bill.class));
-        verify(billMapper).map(any(Bill.class));
     }
 
     @Test
@@ -235,22 +184,23 @@ public class BillServiceTest {
         bill.setUser(user);
         bill.setProducts(products);
 
-        BillDto billDto = new BillDto();
-        billDto.setTotalAmount(100.0);
-        billDto.setNetAmount(100.0);
-
         when(userService.findUserById(anyLong())).thenReturn(user);
         when(productService.findById(anyLong())).thenReturn(groceriesProduct);
-        when(billMapper.map(any(Bill.class))).thenReturn(billDto);
 
         BillDto result = billService.calculateNetAmount(bill);
 
-        assertEquals(100.0, result.getNetAmount());
+        double expectedTotalAmount = 100.0;
+        double expectedPercentageDiscount = 0.0; // No discount for groceries
+        double amountAfterPercentageDiscount = expectedTotalAmount - expectedPercentageDiscount;
+        double expectedAdditionalDiscount = (int)(amountAfterPercentageDiscount / 100) * 5;
+        double expectedNetAmount = amountAfterPercentageDiscount - expectedAdditionalDiscount;
+
+        assertEquals(expectedNetAmount, result.getNetAmount());
         verify(userService).findUserById(anyLong());
         verify(productService).findById(anyLong());
         verify(billRepository).save(any(Bill.class));
-        verify(billMapper).map(any(Bill.class));
     }
+
 
     @Test
     void calculateNetAmount_shouldApplyAdditionalDiscountForEveryHundredUsd() {
@@ -279,20 +229,20 @@ public class BillServiceTest {
         bill.setUser(user);
         bill.setProducts(products);
 
-        BillDto billDto = new BillDto();
-        billDto.setTotalAmount(300.0);
-        billDto.setNetAmount(285.0);
-
         when(userService.findUserById(anyLong())).thenReturn(user);
         when(productService.findById(anyLong())).thenReturn(product1, product2);
-        when(billMapper.map(any(Bill.class))).thenReturn(billDto);
 
         BillDto result = billService.calculateNetAmount(bill);
 
-        assertEquals(285.0, result.getNetAmount());
+        double expectedTotalAmount = 300.0;
+        double expectedPercentageDiscount = expectedTotalAmount * 0.05; // 5% discount for customer over 2 years
+        double amountAfterPercentageDiscount = expectedTotalAmount - expectedPercentageDiscount;
+        double expectedAdditionalDiscount = (int)(amountAfterPercentageDiscount / 100) * 5;
+        double expectedNetAmount = amountAfterPercentageDiscount - expectedAdditionalDiscount;
+
+        assertEquals(expectedNetAmount, result.getNetAmount());
         verify(userService).findUserById(anyLong());
         verify(productService, times(2)).findById(anyLong());
         verify(billRepository).save(any(Bill.class));
-        verify(billMapper).map(any(Bill.class));
     }
 }

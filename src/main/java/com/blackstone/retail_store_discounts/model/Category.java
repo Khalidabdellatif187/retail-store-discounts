@@ -19,4 +19,12 @@ public class Category {
     @Column
     private String name;
 
+    public Category(Category other) {
+        this.id = other.id;
+        this.name = other.name;
+    }
+
+    public Category() {
+    }
+
 }
