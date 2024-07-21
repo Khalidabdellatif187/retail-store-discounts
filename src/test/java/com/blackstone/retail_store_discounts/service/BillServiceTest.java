@@ -80,16 +80,216 @@ public class BillServiceTest {
         bill.setProducts(products);
 
         BillDto billDto = new BillDto();
+        billDto.setTotalAmount(300.0);
+        billDto.setNetAmount(255.0);
 
         when(userService.findUserById(anyLong())).thenReturn(user);
         when(productService.findById(anyLong())).thenReturn(product1, product2);
         when(billMapper.map(any(Bill.class))).thenReturn(billDto);
 
+        BillDto result = billService.calculateNetAmount(bill);
+
+        assertEquals(billDto, result);
+        verify(userService).findUserById(anyLong());
+        verify(productService, times(2)).findById(anyLong());
+        verify(billRepository).save(any(Bill.class));
+        verify(billMapper).map(any(Bill.class));
+    }
+
+    @Test
+    void calculateNetAmount_shouldApplyEmployeeDiscount() {
+        Users user = new Users();
+        user.setId(1L);
+        user.setUserType(UserType.EMPLOYEE);
+        user.setJoinDate(LocalDate.now().minusYears(3));
+
+        Category category = new Category();
+        category.setId(1L);
+        category.setName("electronics");
+
+        Product product = new Product();
+        product.setId(1L);
+        product.setPrice(100.0);
+        product.setCategory(category);
+
+        List<Product> products = Arrays.asList(product);
+
+        Bill bill = new Bill();
+        bill.setUser(user);
+        bill.setProducts(products);
+
+        BillDto billDto = new BillDto();
+        billDto.setTotalAmount(100.0);
+        billDto.setNetAmount(70.0);
+
+        when(userService.findUserById(anyLong())).thenReturn(user);
+        when(productService.findById(anyLong())).thenReturn(product);
+        when(billMapper.map(any(Bill.class))).thenReturn(billDto);
 
         BillDto result = billService.calculateNetAmount(bill);
 
+        assertEquals(70.0, result.getNetAmount());
+        verify(userService).findUserById(anyLong());
+        verify(productService).findById(anyLong());
+        verify(billRepository).save(any(Bill.class));
+        verify(billMapper).map(any(Bill.class));
+    }
 
-        assertEquals(billDto, result);
+    @Test
+    void calculateNetAmount_shouldApplyAffiliateDiscount() {
+        Users user = new Users();
+        user.setId(1L);
+        user.setUserType(UserType.AFFILIATE);
+        user.setJoinDate(LocalDate.now().minusYears(3));
+
+        Category category = new Category();
+        category.setId(1L);
+        category.setName("electronics");
+
+        Product product = new Product();
+        product.setId(1L);
+        product.setPrice(100.0);
+        product.setCategory(category);
+
+        List<Product> products = Arrays.asList(product);
+
+        Bill bill = new Bill();
+        bill.setUser(user);
+        bill.setProducts(products);
+
+        BillDto billDto = new BillDto();
+        billDto.setTotalAmount(100.0);
+        billDto.setNetAmount(90.0);
+
+        when(userService.findUserById(anyLong())).thenReturn(user);
+        when(productService.findById(anyLong())).thenReturn(product);
+        when(billMapper.map(any(Bill.class))).thenReturn(billDto);
+
+        BillDto result = billService.calculateNetAmount(bill);
+
+        assertEquals(90.0, result.getNetAmount());
+        verify(userService).findUserById(anyLong());
+        verify(productService).findById(anyLong());
+        verify(billRepository).save(any(Bill.class));
+        verify(billMapper).map(any(Bill.class));
+    }
+
+    @Test
+    void calculateNetAmount_shouldApplyCustomerDiscount() {
+        Users user = new Users();
+        user.setId(1L);
+        user.setUserType(UserType.CUSTOMER);
+        user.setJoinDate(LocalDate.now().minusYears(3));
+
+        Category category = new Category();
+        category.setId(1L);
+        category.setName("electronics");
+
+        Product product = new Product();
+        product.setId(1L);
+        product.setPrice(100.0);
+        product.setCategory(category);
+
+        List<Product> products = Arrays.asList(product);
+
+        Bill bill = new Bill();
+        bill.setUser(user);
+        bill.setProducts(products);
+
+        BillDto billDto = new BillDto();
+        billDto.setTotalAmount(100.0);
+        billDto.setNetAmount(95.0);
+
+        when(userService.findUserById(anyLong())).thenReturn(user);
+        when(productService.findById(anyLong())).thenReturn(product);
+        when(billMapper.map(any(Bill.class))).thenReturn(billDto);
+
+        BillDto result = billService.calculateNetAmount(bill);
+
+        assertEquals(95.0, result.getNetAmount());
+        verify(userService).findUserById(anyLong());
+        verify(productService).findById(anyLong());
+        verify(billRepository).save(any(Bill.class));
+        verify(billMapper).map(any(Bill.class));
+    }
+
+    @Test
+    void calculateNetAmount_shouldNotApplyDiscountOnGroceries() {
+        Users user = new Users();
+        user.setId(1L);
+        user.setUserType(UserType.EMPLOYEE);
+        user.setJoinDate(LocalDate.now().minusYears(3));
+
+        Category groceriesCategory = new Category();
+        groceriesCategory.setId(1L);
+        groceriesCategory.setName("groceries");
+
+        Product groceriesProduct = new Product();
+        groceriesProduct.setId(1L);
+        groceriesProduct.setPrice(100.0);
+        groceriesProduct.setCategory(groceriesCategory);
+
+        List<Product> products = Arrays.asList(groceriesProduct);
+
+        Bill bill = new Bill();
+        bill.setUser(user);
+        bill.setProducts(products);
+
+        BillDto billDto = new BillDto();
+        billDto.setTotalAmount(100.0);
+        billDto.setNetAmount(100.0);
+
+        when(userService.findUserById(anyLong())).thenReturn(user);
+        when(productService.findById(anyLong())).thenReturn(groceriesProduct);
+        when(billMapper.map(any(Bill.class))).thenReturn(billDto);
+
+        BillDto result = billService.calculateNetAmount(bill);
+
+        assertEquals(100.0, result.getNetAmount());
+        verify(userService).findUserById(anyLong());
+        verify(productService).findById(anyLong());
+        verify(billRepository).save(any(Bill.class));
+        verify(billMapper).map(any(Bill.class));
+    }
+
+    @Test
+    void calculateNetAmount_shouldApplyAdditionalDiscountForEveryHundredUsd() {
+        Users user = new Users();
+        user.setId(1L);
+        user.setUserType(UserType.CUSTOMER);
+        user.setJoinDate(LocalDate.now().minusYears(3));
+
+        Category category = new Category();
+        category.setId(1L);
+        category.setName("electronics");
+
+        Product product1 = new Product();
+        product1.setId(1L);
+        product1.setPrice(150.0);
+        product1.setCategory(category);
+
+        Product product2 = new Product();
+        product2.setId(2L);
+        product2.setPrice(150.0);
+        product2.setCategory(category);
+
+        List<Product> products = Arrays.asList(product1, product2);
+
+        Bill bill = new Bill();
+        bill.setUser(user);
+        bill.setProducts(products);
+
+        BillDto billDto = new BillDto();
+        billDto.setTotalAmount(300.0);
+        billDto.setNetAmount(285.0);
+
+        when(userService.findUserById(anyLong())).thenReturn(user);
+        when(productService.findById(anyLong())).thenReturn(product1, product2);
+        when(billMapper.map(any(Bill.class))).thenReturn(billDto);
+
+        BillDto result = billService.calculateNetAmount(bill);
+
+        assertEquals(285.0, result.getNetAmount());
         verify(userService).findUserById(anyLong());
         verify(productService, times(2)).findById(anyLong());
         verify(billRepository).save(any(Bill.class));

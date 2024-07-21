@@ -8,7 +8,6 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface BillMapper{
 
-    @Mapping(target = "totalAmount",source = "totalAmount")
-    @Mapping(target = "netAmount" ,source = "netAmount")
+
     BillDto map(Bill bill);
 }
