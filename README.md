@@ -39,3 +39,6 @@ indicates netAmount after discounts
 <p>3- Inside the <strong>target</strong> folder,you will see a folder called <strong>jacoco</strong></p><br>
 <p>4- Inside <strong>Jacoco</strong> folder,there is a file called <strong>index.html</strong> which contain coverage report</p>
 <p>5- You can see coverage report by openeing your web browser and write this URL <strong>http://localhost:63342/retail-store-discounts/target/site/jacoco/index.html</strong></p>
+
+<h2>Build Script</h2>
+<p>There is a file called <strong>build</strong> in the root directory has commands of build the project,run unit testing and run code analysis</p>
